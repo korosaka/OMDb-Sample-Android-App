@@ -18,7 +18,7 @@ internal class SearchingMoviesViewModelTest {
     @Test
     fun fetchMoviesTest() {
         runBlocking {
-            viewModel.fetchMovies()
+            viewModel.fetchMoviesExceptPoster()
         }
         assertEquals(10, viewModel.movies.size)
         assertTrue(viewModel.movies.size == 10)

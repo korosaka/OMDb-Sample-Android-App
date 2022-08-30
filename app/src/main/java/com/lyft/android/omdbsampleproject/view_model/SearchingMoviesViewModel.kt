@@ -17,8 +17,14 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     private var currentYear: String? = null
     private var currentPage = 1
 
+    fun fetchMovies(completeListener: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            fetchMoviesExceptPoster()
+        }
+        completeListener()
+    }
 
-    suspend fun fetchMovies() {
+    suspend fun fetchMoviesExceptPoster() {
         val fetchedMovies = withContext(Dispatchers.IO) {
             movieRepo.fetchMoviesData(currentTitle, currentYear)
         }
