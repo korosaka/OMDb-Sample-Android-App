@@ -34,7 +34,7 @@
                 android:hint="Title"
                 android:inputType="text"
                 android:maxLines="1"
-                android:text="@={viewModel.liveSearchingTitle}"
+                android:text="@{viewModel.liveSearchingTitle}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
@@ -48,7 +48,7 @@
                 android:hint="Year"
                 android:inputType="text"
                 android:maxLines="1"
-                android:text="@={viewModel.liveSearchingYear}"
+                android:text="@{viewModel.liveSearchingYear}"
                 app:layout_constraintStart_toEndOf="@+id/title_et"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.25" />
