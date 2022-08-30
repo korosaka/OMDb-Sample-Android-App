@@ -1,5 +1,6 @@
 package com.lyft.android.omdbsampleproject.view_model
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lyft.android.omdbsampleproject.model.MovieData
@@ -12,10 +13,20 @@ import kotlinx.coroutines.withContext
 class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface = MockMovieRepository()) :
     ViewModel() {
 
+    val liveMovies = MutableLiveData<List<MovieData>>()
+    val liveSearchingTitle = MutableLiveData<String>()
+    val liveSearchingYear = MutableLiveData<String>()
+
     val movies: MutableList<MovieData> = mutableListOf()
     private var currentTitle = ""
     private var currentYear: String? = null
     private var currentPage = 1
+
+    init {
+        liveMovies.value = movies
+        liveSearchingTitle.value = ""
+        liveSearchingYear.value = ""
+    }
 
     fun fetchMovies(completeListener: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -26,7 +37,7 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
 
     suspend fun fetchMoviesExceptPoster() {
         val fetchedMovies = withContext(Dispatchers.IO) {
-            movieRepo.fetchMoviesData(currentTitle, currentYear)
+            movieRepo.fetchMoviesData(liveSearchingTitle.value ?: "", currentYear)
         }
         movies.clear()
         movies.addAll(fetchedMovies)

@@ -5,9 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lyft.android.omdbsampleproject.R
+import com.lyft.android.omdbsampleproject.databinding.FragmentSearchingMovieBinding
 import com.lyft.android.omdbsampleproject.view.adapter.MovieListAdapter
 import com.lyft.android.omdbsampleproject.view_model.SearchingMoviesViewModel
 import kotlinx.android.synthetic.main.fragment_searching_movie.*
@@ -16,6 +18,7 @@ class SearchingMovieFragment : Fragment() {
 
     private val viewModel: SearchingMoviesViewModel by viewModels()
     private lateinit var adapter: MovieListAdapter
+    private lateinit var binding: FragmentSearchingMovieBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,9 +28,12 @@ class SearchingMovieFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_searching_movie, container, false)
+    ): View {
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_searching_movie, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = this.viewModel
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
