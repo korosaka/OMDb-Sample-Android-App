@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SearchingMoviesViewModel(val movieRepo: MovieRepositoryInterface = MockMovieRepository()) :
+class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface = MockMovieRepository()) :
     ViewModel() {
 
     val movies: MutableList<MovieData> = mutableListOf()
