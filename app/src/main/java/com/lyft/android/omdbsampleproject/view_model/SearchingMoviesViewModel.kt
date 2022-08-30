@@ -7,20 +7,22 @@ import com.lyft.android.omdbsampleproject.repository.MockMovieRepository
 import com.lyft.android.omdbsampleproject.repository.MovieRepositoryInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchingMoviesViewModel(val movieRepo: MovieRepositoryInterface = MockMovieRepository()) :
     ViewModel() {
 
-    private val movies: MutableList<MovieData> = mutableListOf()
+    val movies: MutableList<MovieData> = mutableListOf()
     private var currentTitle = ""
     private var currentYear: String? = null
     private var currentPage = 1
 
 
-    fun fetchMovies() {
-        viewModelScope.launch(Dispatchers.IO) {
-            movies.clear()
-            movies.addAll(movieRepo.fetchMoviesData(currentTitle, currentYear))
+    suspend fun fetchMovies() {
+        val fetchedMovies = withContext(Dispatchers.IO) {
+            movieRepo.fetchMoviesData(currentTitle, currentYear)
         }
+        movies.clear()
+        movies.addAll(fetchedMovies)
     }
 }
