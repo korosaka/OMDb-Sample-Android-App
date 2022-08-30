@@ -2,9 +2,9 @@ package com.lyft.android.omdbsampleproject.repository
 
 import com.lyft.android.omdbsampleproject.model.MovieData
 
-class MockMovieRepository {
+class MockMovieRepository: MovieRepositoryInterface {
 
-    fun fetchMoviesData(title: String, year: String, page: Int = 1): List<MovieData> {
+    override fun fetchMoviesData(title: String, year: String?, page: Int): List<MovieData> {
         val mutableList = mutableListOf<MovieData>()
         for (movie in mockMovieData) mutableList.add(movie)
         return mutableList.toList()
