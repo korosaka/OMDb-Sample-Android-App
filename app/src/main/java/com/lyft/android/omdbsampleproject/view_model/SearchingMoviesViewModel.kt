@@ -16,16 +16,23 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     val liveMovies = MutableLiveData<List<MovieData>>()
     val liveSearchingTitle = MutableLiveData<String>()
     val liveSearchingYear = MutableLiveData<String>()
+    val pageDisplay = MutableLiveData<String>()
 
     val movies: MutableList<MovieData> = mutableListOf()
     private var currentTitle = ""
     private var currentYear: String? = null
     private var currentPage = 1
+    private var lastPage = 1
+
+    companion object {
+        const val COUNT_PER_PAGE = 10
+    }
 
     init {
         liveMovies.value = movies
         liveSearchingTitle.value = ""
         liveSearchingYear.value = ""
+        pageDisplay.value = ""
     }
 
     fun fetchMovies(completeListener: () -> Unit) {
@@ -36,10 +43,20 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     }
 
     suspend fun fetchMoviesExceptPoster() {
-        val fetchedMovies = withContext(Dispatchers.IO) {
-            movieRepo.fetchMoviesData(liveSearchingTitle.value ?: "", currentYear)
+        val resultInfo = withContext(Dispatchers.IO) {
+            movieRepo.fetchMoviesInfo(liveSearchingTitle.value ?: "", currentYear)
         }
         movies.clear()
-        movies.addAll(fetchedMovies)
+        movies.addAll(resultInfo.movies)
+
+        lastPage = resultInfo.total / COUNT_PER_PAGE
+        if (resultInfo.total % COUNT_PER_PAGE > 0) lastPage++
+        viewModelScope.launch(Dispatchers.Main) {
+            updatePageDisplay()
+        }
+    }
+
+    private fun updatePageDisplay() {
+        pageDisplay.value = "Page$currentPage in $lastPage"
     }
 }
