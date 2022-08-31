@@ -1,10 +1,13 @@
 package com.lyft.android.omdbsampleproject.view.fragment
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,6 +48,20 @@ class SearchingMovieFragment : Fragment() {
 
         viewModel.liveMovies.observe(viewLifecycleOwner) {
             adapter.notifyDataSetChanged()
+        }
+        operateKeyBoard()
+    }
+
+    private fun operateKeyBoard() {
+        addFocusChangeListener(title_et)
+        addFocusChangeListener(year_et)
+    }
+
+    private fun addFocusChangeListener(et: EditText) {
+        et.setOnFocusChangeListener { view, b ->
+            val imm: InputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            if (b) imm.showSoftInput(view, 0)
+            else imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 }
