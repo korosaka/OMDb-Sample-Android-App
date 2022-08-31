@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lyft.android.omdbsampleproject.model.MovieData
 import com.lyft.android.omdbsampleproject.repository.MockMovieRepository
+import com.lyft.android.omdbsampleproject.repository.MovieImageRepository
 import com.lyft.android.omdbsampleproject.repository.MovieRepositoryImpl
 import com.lyft.android.omdbsampleproject.repository.MovieRepositoryInterface
 import kotlinx.coroutines.Dispatchers
@@ -62,9 +63,13 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     private fun fetchMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             fetchMoviesExceptPoster()
-            viewModelScope.launch(Dispatchers.Main) {
+            updateLiveMovies()
+            updatePageDisplay()
+
+            val imageRepo = MovieImageRepository()
+            for (movie in movies) {
+                movie.poster = imageRepo.fetchImage(movie.posterUrl)
                 updateLiveMovies()
-                updatePageDisplay()
             }
         }
     }
@@ -81,10 +86,14 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     }
 
     private fun updateLiveMovies() {
-        liveMovies.value = movies
+        viewModelScope.launch(Dispatchers.Main) {
+            liveMovies.value = movies
+        }
     }
 
     private fun updatePageDisplay() {
-        pageDisplay.value = "Page$currentPage in $lastPage"
+        viewModelScope.launch(Dispatchers.Main) {
+            pageDisplay.value = "Page$currentPage in $lastPage"
+        }
     }
 }
