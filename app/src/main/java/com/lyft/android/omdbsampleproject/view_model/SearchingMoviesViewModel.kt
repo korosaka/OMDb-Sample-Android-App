@@ -86,7 +86,8 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         movies.clear()
 
         if (resultInfo == null) searchResultStatus = ERROR_RESULT
-        else if(resultInfo.movies.isEmpty() || resultInfo.total == 0) searchResultStatus = EMPTY_RESULT
+        else if (resultInfo.movies.isEmpty() || resultInfo.total == 0)
+            searchResultStatus = EMPTY_RESULT
         else {
             searchResultStatus = SUCCESS_RESULT
             movies.addAll(resultInfo.movies)
