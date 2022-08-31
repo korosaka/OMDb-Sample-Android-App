@@ -36,6 +36,7 @@
                 android:maxLines="1"
                 android:text="@={viewModel.liveSearchingTitle}"
                 android:textColor="@color/black"
+                android:textColorHint="#808080"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
@@ -51,6 +52,7 @@
                 android:maxLines="1"
                 android:text="@={viewModel.liveSearchingYear}"
                 android:textColor="@color/black"
+                android:textColorHint="#808080"
                 app:layout_constraintStart_toEndOf="@+id/title_et"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.25" />
@@ -59,6 +61,7 @@
                 android:id="@+id/search_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:onClick="@{() -> viewModel.onClickSearchButton()}"
                 android:text="Search"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

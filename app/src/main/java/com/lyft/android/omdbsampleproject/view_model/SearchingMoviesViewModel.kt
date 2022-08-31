@@ -35,25 +35,39 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         pageDisplay.value = ""
     }
 
-    fun fetchMovies(completeListener: () -> Unit) {
+    fun onClickSearchButton() {
+        if (liveSearchingTitle.value.isNullOrBlank()) return
+        currentTitle = liveSearchingTitle.value!!
+        currentYear = liveSearchingYear.value
+        currentPage = 1
+
+        fetchMovies()
+    }
+
+    private fun fetchMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             fetchMoviesExceptPoster()
         }
-        completeListener()
     }
 
     suspend fun fetchMoviesExceptPoster() {
         val resultInfo = withContext(Dispatchers.IO) {
-            movieRepo.fetchMoviesInfo(liveSearchingTitle.value ?: "", currentYear)
+            movieRepo.fetchMoviesInfo(currentTitle, currentYear, currentPage)
         }
         movies.clear()
         movies.addAll(resultInfo.movies)
 
         lastPage = resultInfo.total / COUNT_PER_PAGE
         if (resultInfo.total % COUNT_PER_PAGE > 0) lastPage++
+
         viewModelScope.launch(Dispatchers.Main) {
+            updateLiveMovies()
             updatePageDisplay()
         }
+    }
+
+    private fun updateLiveMovies() {
+        liveMovies.value = movies
     }
 
     private fun updatePageDisplay() {
