@@ -44,6 +44,20 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         fetchMovies()
     }
 
+    fun onClickBackPage() {
+        if (currentPage < 2) return
+        currentPage--
+
+        fetchMovies()
+    }
+
+    fun onClickNextPage() {
+        if (currentPage == lastPage) return
+        currentPage++
+
+        fetchMovies()
+    }
+
     private fun fetchMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             fetchMoviesExceptPoster()
