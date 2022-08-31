@@ -8,6 +8,7 @@ class MockMovieRepository : MovieRepositoryInterface {
     override fun fetchMoviesInfo(title: String, year: String?, page: Int): ResultMoviesInfo {
         val mutableList = mutableListOf<MovieData>()
         for (movie in mockMovieData[page]) mutableList.add(movie)
+        Thread.sleep(2000)
         return ResultMoviesInfo(mutableList, countTotal())
     }
 
