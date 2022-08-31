@@ -23,31 +23,36 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     val movies: MutableList<MovieData> = mutableListOf()
     private var currentTitle = ""
     private var currentYear: String? = null
-    private var currentPage = 1
-    private var lastPage = 1
+    private var currentPage = DEFAULT_PAGE
+    private var lastPage = DEFAULT_PAGE
+    private var searchResultStatus = EMPTY_RESULT
 
     companion object {
         const val COUNT_PER_PAGE = 10
+        const val DEFAULT_PAGE = 1
+        const val ERROR_RESULT = -1
+        const val EMPTY_RESULT = 0
+        const val SUCCESS_RESULT = 1
     }
 
     init {
         liveMovies.value = movies
         liveSearchingTitle.value = ""
         liveSearchingYear.value = ""
-        pageDisplay.value = ""
+        pageDisplay.value = "Let's search movies!"
     }
 
     fun onClickSearchButton() {
         if (liveSearchingTitle.value.isNullOrBlank()) return
         currentTitle = liveSearchingTitle.value!!
         currentYear = liveSearchingYear.value
-        currentPage = 1
+        currentPage = DEFAULT_PAGE
 
         fetchMovies()
     }
 
     fun onClickBackPage() {
-        if (currentPage < 2) return
+        if (currentPage <= DEFAULT_PAGE) return
         currentPage--
 
         fetchMovies()
@@ -79,10 +84,16 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
             movieRepo.fetchMoviesInfo(currentTitle, currentYear, currentPage)
         }
         movies.clear()
-        movies.addAll(resultInfo.movies)
 
-        lastPage = resultInfo.total / COUNT_PER_PAGE
-        if (resultInfo.total % COUNT_PER_PAGE > 0) lastPage++
+        if (resultInfo == null) searchResultStatus = ERROR_RESULT
+        else if(resultInfo.movies.isEmpty() || resultInfo.total == 0) searchResultStatus = EMPTY_RESULT
+        else {
+            searchResultStatus = SUCCESS_RESULT
+            movies.addAll(resultInfo.movies)
+
+            lastPage = resultInfo.total / COUNT_PER_PAGE
+            if (resultInfo.total % COUNT_PER_PAGE > 0) lastPage++
+        }
     }
 
     private fun updateLiveMovies() {
@@ -93,7 +104,11 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
 
     private fun updatePageDisplay() {
         viewModelScope.launch(Dispatchers.Main) {
-            pageDisplay.value = "Page$currentPage in $lastPage"
+            pageDisplay.value = when (searchResultStatus) {
+                SUCCESS_RESULT -> "Page$currentPage in $lastPage"
+                EMPTY_RESULT -> "Movie not found!"
+                else -> "An error has occurred"
+            }
         }
     }
 }

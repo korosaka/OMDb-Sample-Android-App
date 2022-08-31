@@ -8,29 +8,32 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MovieRepositoryImpl : MovieRepositoryInterface {
-    override fun fetchMoviesInfo(title: String, year: String?, page: Int): ResultMoviesInfo {//TODO nullable
+    override fun fetchMoviesInfo(title: String, year: String?, page: Int): ResultMoviesInfo? {
+        try {
+            val response = implementService()
+                .fetchMoviesInfo(API_KEY, title, year, page)
+                .execute()
+            val resultEntity =
+                response.body()
 
+            val movieArray = resultEntity?.Search
+            val totalCount = resultEntity?.totalResults
+            if (movieArray.isNullOrEmpty() || totalCount.isNullOrEmpty()) return createEmptyResult()
 
-        //TODO tyr catch
-        val response = implementService()
-            .fetchMoviesInfo(API_KEY, title, year, page)
-            .execute()
-        val resultEntity =
-            response.body()
-
-        val moviesData = mutableListOf<MovieData>()
-        if (resultEntity == null || resultEntity!!.Search.isNullOrEmpty()) {
-            return ResultMoviesInfo(listOf(), 0)
-        }
-        for (movieEntity in resultEntity!!.Search) {
-            val movie = movieEntity.let {
-                MovieData(it.imdbID, it.Title, it.Year, it.Poster, null)
+            val moviesData = mutableListOf<MovieData>()
+            for (movieEntity in movieArray) {
+                moviesData.add(movieEntity.let {
+                    MovieData(it.imdbID, it.Title, it.Year, it.Poster, null)
+                })
             }
-            moviesData.add(movie)
-        }
 
-        return ResultMoviesInfo(moviesData, resultEntity.totalResults.toInt())
+            return ResultMoviesInfo(moviesData, totalCount.toInt())
+        } catch (e: Exception) {
+            return null
+        }
     }
+
+    private fun createEmptyResult() = ResultMoviesInfo(listOf(), 0)
 
     private fun implementService(): MovieAPIService {
         return createRetrofit().create(MovieAPIService::class.java)
