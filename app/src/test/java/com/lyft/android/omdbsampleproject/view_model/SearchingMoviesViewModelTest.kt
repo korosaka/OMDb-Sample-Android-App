@@ -1,6 +1,7 @@
 package com.lyft.android.omdbsampleproject.view_model
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.lyft.android.omdbsampleproject.repository.MockMovieRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -18,7 +19,7 @@ internal class SearchingMoviesViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = SearchingMoviesViewModel()
+        viewModel = SearchingMoviesViewModel(MockMovieRepository())
     }
 
     @Test

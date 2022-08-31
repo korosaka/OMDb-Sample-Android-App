@@ -5,12 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lyft.android.omdbsampleproject.model.MovieData
 import com.lyft.android.omdbsampleproject.repository.MockMovieRepository
+import com.lyft.android.omdbsampleproject.repository.MovieRepositoryImpl
 import com.lyft.android.omdbsampleproject.repository.MovieRepositoryInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface = MockMovieRepository()) :
+class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface = MovieRepositoryImpl()) :
     ViewModel() {
 
     val liveMovies = MutableLiveData<List<MovieData>>()
