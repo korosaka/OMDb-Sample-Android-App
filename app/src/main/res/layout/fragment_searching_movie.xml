@@ -34,7 +34,8 @@
                 android:hint="Title"
                 android:inputType="text"
                 android:maxLines="1"
-                android:text="@{viewModel.liveSearchingTitle}"
+                android:text="@={viewModel.liveSearchingTitle}"
+                android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.6" />
@@ -48,7 +49,8 @@
                 android:hint="Year"
                 android:inputType="text"
                 android:maxLines="1"
-                android:text="@{viewModel.liveSearchingYear}"
+                android:text="@={viewModel.liveSearchingYear}"
+                android:textColor="@color/black"
                 app:layout_constraintStart_toEndOf="@+id/title_et"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.25" />
@@ -86,6 +88,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@{viewModel.pageDisplay}"
+                android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="@+id/back_button"
                 app:layout_constraintEnd_toStartOf="@+id/next_button"
                 app:layout_constraintStart_toEndOf="@+id/back_button"
