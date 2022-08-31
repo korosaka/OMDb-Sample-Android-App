@@ -62,6 +62,10 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     private fun fetchMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             fetchMoviesExceptPoster()
+            viewModelScope.launch(Dispatchers.Main) {
+                updateLiveMovies()
+                updatePageDisplay()
+            }
         }
     }
 
@@ -74,11 +78,6 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
 
         lastPage = resultInfo.total / COUNT_PER_PAGE
         if (resultInfo.total % COUNT_PER_PAGE > 0) lastPage++
-
-        viewModelScope.launch(Dispatchers.Main) {
-            updateLiveMovies()
-            updatePageDisplay()
-        }
     }
 
     private fun updateLiveMovies() {

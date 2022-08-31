@@ -2,6 +2,7 @@ package com.lyft.android.omdbsampleproject.view_model
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.lyft.android.omdbsampleproject.repository.MockMovieRepository
+import com.lyft.android.omdbsampleproject.view_model.SearchingMoviesViewModel.Companion.COUNT_PER_PAGE
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -27,7 +28,7 @@ internal class SearchingMoviesViewModelTest {
         runBlocking {
             viewModel.fetchMoviesExceptPoster()
         }
-        assertEquals(10, viewModel.movies.size)
+        assertEquals(COUNT_PER_PAGE, viewModel.movies.size)
     }
 
 }
