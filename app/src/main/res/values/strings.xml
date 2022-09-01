@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">OMDbSampleProject</string>
+    <string name="title">Title</string>
+    <string name="year">Year</string>
+    <string name="search">Search</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="plot">Plot</string>
+
+
 </resources>
