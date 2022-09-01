@@ -125,6 +125,10 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         val resultInfo = withContext(Dispatchers.IO) {
             movieRepo.fetchMoviesInfo(currentTitle, currentYear, currentPage)
         }
+        /**
+         * Because withContext(Dispatchers) is a suspend function,
+         * the below functions start only after fetching resultInfo.
+         */
         movies.clear()
 
         if (resultInfo == null) searchResultStatus = ERROR_RESULT
@@ -133,10 +137,13 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         else {
             searchResultStatus = SUCCESS_RESULT
             movies.addAll(resultInfo.movies)
-
-            lastPage = resultInfo.total / COUNT_PER_PAGE
-            if (resultInfo.total % COUNT_PER_PAGE > 0) lastPage++
+            calcLastPage(resultInfo.total)
         }
+    }
+
+    private fun calcLastPage(totalCount: Int) {
+        lastPage = totalCount / COUNT_PER_PAGE
+        if (totalCount % COUNT_PER_PAGE > 0) lastPage++
     }
 
     private fun fetchMoviesPoster() {
