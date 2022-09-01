@@ -18,8 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:background="#008b8b"
-        android:padding="3dp">
+        android:background="@drawable/movie_card_bg"
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/movie_poster_image"
@@ -70,10 +70,9 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#7fffd4"
                 android:onClick="@{() -> viewModel.onClickPlot(movieData.id)}"
                 android:text="Plot"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
