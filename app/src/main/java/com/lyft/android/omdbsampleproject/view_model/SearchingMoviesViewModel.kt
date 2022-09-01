@@ -102,7 +102,7 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
             fetchMoviesExceptPoster()
             updateLiveMovies()
             updatePageDisplay()
-
+            resetScroll()
             val imageRepo = MovieImageRepository()
             //To avoid ConcurrentModificationException when the Back/Next button is tapped fast
             try {
@@ -156,7 +156,14 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         }
     }
 
+    private fun resetScroll() {
+        viewModelScope.launch(Dispatchers.Main) {
+            listener?.resetScroll()
+        }
+    }
+
     interface SearchingListener {
         fun showToast(message: String)
+        fun resetScroll()
     }
 }

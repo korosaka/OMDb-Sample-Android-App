@@ -71,4 +71,8 @@ class SearchingMovieFragment : Fragment(), SearchingMoviesViewModel.SearchingLis
     override fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
+
+    override fun resetScroll() {
+        movie_list_rv.scrollToPosition(0)
+    }
 }
