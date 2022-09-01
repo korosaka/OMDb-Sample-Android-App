@@ -1,3 +1,12 @@
+# Demo Screens
+
+<p>
+<img src="https://github.com/korosaka/source_image/blob/main/omdb/screen_image1.png" width="200px">
+<img src="https://github.com/korosaka/source_image/blob/main/omdb/screen_image2.png" width="200px">
+<img src="https://github.com/korosaka/source_image/blob/main/omdb/screen_image3.png" width="200px">
+<img src="https://github.com/korosaka/source_image/blob/main/omdb/screen_image4.png" width="200px">
+</p>
+
 # Summary
 #### 
 This App is an Android App that can search movie info from OMDB. (http://www.omdbapi.com/)
