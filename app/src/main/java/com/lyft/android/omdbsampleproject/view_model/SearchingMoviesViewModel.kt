@@ -28,7 +28,7 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
      */
     val movies: MutableList<MovieData> = mutableListOf()
 
-    private var currentTitle = ""
+    private var currentTitle = EMPTY
     private var currentYear: String? = null
     private var currentPage = DEFAULT_PAGE
     private var lastPage = DEFAULT_PAGE
@@ -42,12 +42,13 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         const val ERROR_RESULT = -1
         const val EMPTY_RESULT = 0
         const val SUCCESS_RESULT = 1
+        const val EMPTY = ""
     }
 
     init {
         liveMovies.value = movies
-        liveSearchingTitle.value = ""
-        liveSearchingYear.value = ""
+        liveSearchingTitle.value = EMPTY
+        liveSearchingYear.value = EMPTY
         livePageDisplay.value = "Let's search movies!"
         livePlot.value = "Movie Plot"
     }
@@ -107,22 +108,16 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         resetPlot()
         viewModelScope.launch(Dispatchers.IO) {
             fetchMoviesExceptPoster()
+
+            /**
+             * fetchMoviesExceptPoster() is a suspend function.
+             * This is why the below functions are going to run only after completing fetching movies' info(except Poster)
+             */
             updateLiveMovies()
             updatePageDisplay()
             resetScroll()
-            val imageRepo = MovieImageRepository()
 
-            /***
-             * Using try-catch to avoid ConcurrentModificationException when the Back/Next button is tapped fast
-             */
-            try {
-                for (movie in movies) {
-                    movie.poster = imageRepo.fetchImage(movie.posterUrl)
-                    updateLiveMovies()
-                }
-            } catch (e: Exception) {
-                return@launch
-            }
+            fetchMoviesPoster()
         }
     }
 
@@ -141,6 +136,21 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
 
             lastPage = resultInfo.total / COUNT_PER_PAGE
             if (resultInfo.total % COUNT_PER_PAGE > 0) lastPage++
+        }
+    }
+
+    private fun fetchMoviesPoster() {
+        val imageRepo = MovieImageRepository()
+        /***
+         * Using try-catch to avoid ConcurrentModificationException when the Back/Next button is tapped fast
+         */
+        try {
+            for (movie in movies) {
+                movie.poster = imageRepo.fetchImage(movie.posterUrl)
+                updateLiveMovies()
+            }
+        } catch (e: Exception) {
+            return
         }
     }
 
