@@ -182,6 +182,10 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         }
     }
 
+    /**
+     * In MVVM, ViewModel can't refer View.
+     * This is why through Interface, update View.
+     */
     interface SearchingListener {
         fun showToast(message: String)
         fun resetScroll()
