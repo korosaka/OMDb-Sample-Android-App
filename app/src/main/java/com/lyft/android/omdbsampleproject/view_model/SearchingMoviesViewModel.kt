@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lyft.android.omdbsampleproject.model.MovieData
-import com.lyft.android.omdbsampleproject.repository.MovieImageRepository
-import com.lyft.android.omdbsampleproject.repository.MovieRepositoryImpl
-import com.lyft.android.omdbsampleproject.repository.MovieRepositoryInterface
+import com.lyft.android.omdbsampleproject.model.repository.movie_image.MovieImageRepository
+import com.lyft.android.omdbsampleproject.model.repository.movies_info.MovieRepositoryImpl
+import com.lyft.android.omdbsampleproject.model.repository.movies_info.MovieRepositoryInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
