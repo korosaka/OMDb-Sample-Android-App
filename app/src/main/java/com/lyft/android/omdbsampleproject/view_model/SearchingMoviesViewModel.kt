@@ -62,7 +62,7 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         currentYear = liveSearchingYear.value
         currentPage = DEFAULT_PAGE
 
-        fetchMovies()
+        fetchMoviesInIO()
     }
 
     fun onClickBackPage() {
@@ -76,7 +76,7 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         }
         currentPage--
 
-        fetchMovies()
+        fetchMoviesInIO()
     }
 
     fun onClickNextPage() {
@@ -90,7 +90,7 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         }
         currentPage++
 
-        fetchMovies()
+        fetchMoviesInIO()
     }
 
     fun onClickPlot(id: String) {
@@ -104,24 +104,33 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         }
     }
 
-    private fun fetchMovies() {
-        resetPlot()
+    private fun fetchMoviesInIO() {
         viewModelScope.launch(Dispatchers.IO) {
-            fetchMoviesExceptPoster()
-
-            /**
-             * fetchMoviesExceptPoster() is a suspend function.
-             * This is why the below functions are going to run only after completing fetching movies' info(except Poster)
-             */
-            updateLiveMovies()
-            updatePageDisplay()
-            resetScroll()
-
-            fetchMoviesPoster()
+            fetchMovies()
         }
     }
 
-    suspend fun fetchMoviesExceptPoster() {
+    suspend fun fetchMovies() {
+        resetPlot()
+        fetchMoviesExceptPoster()
+
+        /**
+         * fetchMoviesExceptPoster() is a suspend function.
+         * This is why the below functions are going to run only after completing fetching movies' info(except Poster)
+         */
+        updateLiveMovies()
+        updatePageDisplay()
+        resetScroll()
+
+        fetchMoviesPoster()
+    }
+
+    private suspend fun fetchMoviesExceptPoster() {
+        /**
+         * "withContext(Dispatchers)" is a suspend function.
+         * This is why "fetchMoviesExceptPoster()" needs to be suspend too
+         * as long as not using "viewModelScope.launch".
+         */
         val resultInfo = withContext(Dispatchers.IO) {
             movieRepo.fetchMoviesInfo(currentTitle, currentYear, currentPage)
         }
@@ -146,18 +155,20 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         if (totalCount % COUNT_PER_PAGE > 0) lastPage++
     }
 
-    private fun fetchMoviesPoster() {
-        val imageRepo = MovieImageRepository()
-        /***
-         * Using try-catch to avoid ConcurrentModificationException when the Back/Next button is tapped fast
-         */
-        try {
-            for (movie in movies) {
-                movie.poster = imageRepo.fetchImage(movie.posterUrl)
-                updateLiveMovies()
+    private suspend fun fetchMoviesPoster() {
+        withContext(Dispatchers.IO) {
+            val imageRepo = MovieImageRepository()
+            /***
+             * Using try-catch to avoid ConcurrentModificationException when the Back/Next button is tapped fast
+             */
+            try {
+                for (movie in movies) {
+                    movie.poster = imageRepo.fetchImage(movie.posterUrl)
+                    updateLiveMovies()
+                }
+            } catch (e: Exception) {
+                return@withContext
             }
-        } catch (e: Exception) {
-            return
         }
     }
 
