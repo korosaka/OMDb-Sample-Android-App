@@ -17,7 +17,8 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     val liveMovies = MutableLiveData<List<MovieData>>()
     val liveSearchingTitle = MutableLiveData<String>()
     val liveSearchingYear = MutableLiveData<String>()
-    val pageDisplay = MutableLiveData<String>()
+    val livePageDisplay = MutableLiveData<String>()
+    val livePlot = MutableLiveData<String>()
 
     val movies: MutableList<MovieData> = mutableListOf()
     private var currentTitle = ""
@@ -40,7 +41,8 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         liveMovies.value = movies
         liveSearchingTitle.value = ""
         liveSearchingYear.value = ""
-        pageDisplay.value = "Let's search movies!"
+        livePageDisplay.value = "Let's search movies!"
+        livePlot.value = "Movie Plot"
     }
 
     fun onClickSearchButton() {
@@ -83,7 +85,19 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         fetchMovies()
     }
 
+    fun onClickPlot(id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val plot = movieRepo.fetchMoviePlot(id)
+            viewModelScope.launch(Dispatchers.Main) {
+                plot?.let {
+                    livePlot.value = it
+                }
+            }
+        }
+    }
+
     private fun fetchMovies() {
+        resetPlot()
         viewModelScope.launch(Dispatchers.IO) {
             fetchMoviesExceptPoster()
             updateLiveMovies()
@@ -128,11 +142,17 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
 
     private fun updatePageDisplay() {
         viewModelScope.launch(Dispatchers.Main) {
-            pageDisplay.value = when (searchResultStatus) {
+            livePageDisplay.value = when (searchResultStatus) {
                 SUCCESS_RESULT -> "Page$currentPage in $lastPage"
                 EMPTY_RESULT -> "Movie not found!"
                 else -> "An error has occurred"
             }
+        }
+    }
+
+    private fun resetPlot() {
+        viewModelScope.launch(Dispatchers.Main) {
+            livePlot.value = "Movie Plot"
         }
     }
 

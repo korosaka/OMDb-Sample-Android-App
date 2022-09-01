@@ -102,7 +102,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@{viewModel.pageDisplay}"
+                android:text="@{viewModel.livePageDisplay}"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="@+id/back_button"
                 app:layout_constraintEnd_toStartOf="@+id/next_button"
@@ -126,9 +126,20 @@
                 android:id="@+id/movie_list_rv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/plot_tv"
                 app:layout_constraintTop_toBottomOf="@+id/back_button" />
 
+            <TextView
+                android:id="@+id/plot_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@color/white"
+                android:padding="5dp"
+                android:text="@{viewModel.livePlot}"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

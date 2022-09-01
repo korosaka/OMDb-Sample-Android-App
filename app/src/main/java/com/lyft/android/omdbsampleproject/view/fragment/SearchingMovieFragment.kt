@@ -26,7 +26,7 @@ class SearchingMovieFragment : Fragment(), SearchingMoviesViewModel.SearchingLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter = MovieListAdapter(viewModel.movies)
+        adapter = MovieListAdapter(viewModel)
         viewModel.listener = this
     }
 

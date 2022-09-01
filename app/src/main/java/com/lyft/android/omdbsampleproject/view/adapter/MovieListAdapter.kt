@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lyft.android.omdbsampleproject.R
 import com.lyft.android.omdbsampleproject.databinding.MovieListItemViewBinding
 import com.lyft.android.omdbsampleproject.model.MovieData
+import com.lyft.android.omdbsampleproject.view_model.SearchingMoviesViewModel
 import kotlinx.android.synthetic.main.movie_list_item_view.view.*
 
-class MovieListAdapter(private val movies: List<MovieData>) :
+class MovieListAdapter(
+    private val viewModel: SearchingMoviesViewModel
+) :
     RecyclerView.Adapter<MovieListAdapter.MyViewHolder>() {
 
     class MyViewHolder(val binding: MovieListItemViewBinding) :
@@ -23,11 +26,12 @@ class MovieListAdapter(private val movies: List<MovieData>) :
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val movie = movies[position]
+        val movie = viewModel.movies[position]
         holder.binding.movieData = movie
+        holder.binding.viewModel = viewModel
     }
 
     override fun getItemCount(): Int {
-        return movies.size
+        return viewModel.movies.size
     }
 }

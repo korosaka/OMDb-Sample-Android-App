@@ -70,6 +70,11 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:backgroundTint="#7fffd4"
+                android:onClick="@{() -> viewModel.onClickPlot(movieData.id)}"
+                android:text="Plot"
+                android:textColor="@color/black"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
