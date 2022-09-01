@@ -27,6 +27,8 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     private var lastPage = DEFAULT_PAGE
     private var searchResultStatus = EMPTY_RESULT
 
+    var listener: SearchingListener? = null
+
     companion object {
         const val COUNT_PER_PAGE = 10
         const val DEFAULT_PAGE = 1
@@ -43,7 +45,10 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     }
 
     fun onClickSearchButton() {
-        if (liveSearchingTitle.value.isNullOrBlank()) return
+        if (liveSearchingTitle.value.isNullOrBlank()) {
+            listener?.showToast("Please enter Title")
+            return
+        }
         currentTitle = liveSearchingTitle.value!!
         currentYear = liveSearchingYear.value
         currentPage = DEFAULT_PAGE
@@ -52,14 +57,28 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     }
 
     fun onClickBackPage() {
-        if (currentPage <= DEFAULT_PAGE) return
+        if (movies.isEmpty()) {
+            listener?.showToast("There is no movie")
+            return
+        }
+        if (currentPage <= DEFAULT_PAGE) {
+            listener?.showToast("Here is the top page")
+            return
+        }
         currentPage--
 
         fetchMovies()
     }
 
     fun onClickNextPage() {
-        if (currentPage == lastPage) return
+        if (movies.isEmpty()) {
+            listener?.showToast("There is no movie")
+            return
+        }
+        if (currentPage == lastPage) {
+            listener?.showToast("Here is the last page")
+            return
+        }
         currentPage++
 
         fetchMovies()
@@ -111,5 +130,9 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
                 else -> "An error has occurred"
             }
         }
+    }
+
+    interface SearchingListener {
+        fun showToast(message: String)
     }
 }

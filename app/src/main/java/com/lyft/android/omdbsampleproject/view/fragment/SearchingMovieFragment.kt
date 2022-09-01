@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +18,7 @@ import com.lyft.android.omdbsampleproject.view.adapter.MovieListAdapter
 import com.lyft.android.omdbsampleproject.view_model.SearchingMoviesViewModel
 import kotlinx.android.synthetic.main.fragment_searching_movie.*
 
-class SearchingMovieFragment : Fragment() {
+class SearchingMovieFragment : Fragment(), SearchingMoviesViewModel.SearchingListener {
 
     private val viewModel: SearchingMoviesViewModel by viewModels()
     private lateinit var adapter: MovieListAdapter
@@ -26,6 +27,7 @@ class SearchingMovieFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         adapter = MovieListAdapter(viewModel.movies)
+        viewModel.listener = this
     }
 
     override fun onCreateView(
@@ -59,9 +61,14 @@ class SearchingMovieFragment : Fragment() {
 
     private fun addFocusChangeListener(et: EditText) {
         et.setOnFocusChangeListener { view, b ->
-            val imm: InputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm: InputMethodManager =
+                activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             if (b) imm.showSoftInput(view, 0)
             else imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
+    }
+
+    override fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }
