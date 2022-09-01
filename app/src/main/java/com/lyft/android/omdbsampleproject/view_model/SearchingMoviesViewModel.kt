@@ -20,7 +20,14 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     val livePageDisplay = MutableLiveData<String>()
     val livePlot = MutableLiveData<String>()
 
+    /**
+     * To keep same instance for List, "movies" is used
+     * because LiveData.value can't use clear(), for example.
+     * The reason to keep the List instance is to avoid recreate Adapter for RecyclerView.
+     * If the different instance is set to the value, notify methods never work.
+     */
     val movies: MutableList<MovieData> = mutableListOf()
+
     private var currentTitle = ""
     private var currentYear: String? = null
     private var currentPage = DEFAULT_PAGE
@@ -104,7 +111,10 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
             updatePageDisplay()
             resetScroll()
             val imageRepo = MovieImageRepository()
-            //To avoid ConcurrentModificationException when the Back/Next button is tapped fast
+
+            /***
+             * Using try-catch to avoid ConcurrentModificationException when the Back/Next button is tapped fast
+             */
             try {
                 for (movie in movies) {
                     movie.poster = imageRepo.fetchImage(movie.posterUrl)

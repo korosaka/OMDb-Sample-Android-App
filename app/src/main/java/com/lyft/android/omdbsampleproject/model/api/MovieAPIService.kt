@@ -7,6 +7,10 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface MovieAPIService {
+    /**
+     * Reference: http://www.omdbapi.com/
+     */
+
     @GET("/")
     fun fetchMoviesInfo(
         @Query("apikey") apiKey: String,
