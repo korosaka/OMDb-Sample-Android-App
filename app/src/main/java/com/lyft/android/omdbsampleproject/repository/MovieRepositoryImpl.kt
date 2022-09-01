@@ -33,6 +33,19 @@ class MovieRepositoryImpl : MovieRepositoryInterface {
         }
     }
 
+    override fun fetchMoviePlot(id: String): String? {
+        return try {
+            val response = implementService()
+                .fetchMoviePlot(API_KEY, id)
+                .execute()
+            val plotEntity =
+                response.body()
+            plotEntity?.Plot
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     private fun createEmptyResult() = ResultMoviesInfo(listOf(), 0)
 
     private fun implementService(): MovieAPIService {

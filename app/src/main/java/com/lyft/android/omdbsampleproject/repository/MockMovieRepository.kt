@@ -13,6 +13,10 @@ class MockMovieRepository : MovieRepositoryInterface {
         return ResultMoviesInfo(mutableList, countTotal())
     }
 
+    override fun fetchMoviePlot(id: String): String? {
+        return null
+    }
+
     private val mockMovieData = arrayOf(
         arrayOf(
             MovieData("test_id1", "Test Title1", "1991", "test_url", null),
