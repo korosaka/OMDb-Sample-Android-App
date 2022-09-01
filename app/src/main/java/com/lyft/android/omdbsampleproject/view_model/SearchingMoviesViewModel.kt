@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lyft.android.omdbsampleproject.model.MovieData
-import com.lyft.android.omdbsampleproject.repository.MockMovieRepository
 import com.lyft.android.omdbsampleproject.repository.MovieImageRepository
 import com.lyft.android.omdbsampleproject.repository.MovieRepositoryImpl
 import com.lyft.android.omdbsampleproject.repository.MovieRepositoryInterface
@@ -91,9 +90,14 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
             updatePageDisplay()
 
             val imageRepo = MovieImageRepository()
-            for (movie in movies) {
-                movie.poster = imageRepo.fetchImage(movie.posterUrl)
-                updateLiveMovies()
+            //To avoid ConcurrentModificationException when the Back/Next button is tapped fast
+            try {
+                for (movie in movies) {
+                    movie.poster = imageRepo.fetchImage(movie.posterUrl)
+                    updateLiveMovies()
+                }
+            } catch (e: Exception) {
+                return@launch
             }
         }
     }
