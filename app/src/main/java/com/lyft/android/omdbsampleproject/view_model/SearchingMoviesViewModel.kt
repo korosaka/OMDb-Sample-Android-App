@@ -154,6 +154,10 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         }
     }
 
+    /**
+     * To be observed in View and update the movie list view(RecyclerView),
+     * this substitution to Livedata is needed although the Livedata has already had this data(reference to "movies").
+     */
     private fun updateLiveMovies() {
         viewModelScope.launch(Dispatchers.Main) {
             liveMovies.value = movies
