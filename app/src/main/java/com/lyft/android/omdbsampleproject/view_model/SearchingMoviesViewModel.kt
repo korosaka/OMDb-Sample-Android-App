@@ -17,6 +17,7 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     val liveMovies = MutableLiveData<List<MovieData>>()
     val liveSearchingTitle = MutableLiveData<String>()
     val liveSearchingYear = MutableLiveData<String>()
+    val liveSearchingPage = MutableLiveData<String>()
     val livePageDisplay = MutableLiveData<String>()
     val livePlot = MutableLiveData<String>()
 
@@ -93,6 +94,19 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         fetchMoviesInIO()
     }
 
+    fun onClickGoToPage() {
+        if (movies.isEmpty()) {
+            listener?.showToast("There is no movie")
+            return
+        }
+        if (liveSearchingPage.value.isNullOrEmpty()) {
+            listener?.showToast("Please enter the page")
+            return
+        }
+        currentPage = liveSearchingPage.value!!.toInt()
+        fetchMoviesInIO()
+    }
+
     fun onClickPlot(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val plot = movieRepo.fetchMoviePlot(id)
@@ -121,6 +135,7 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         updateLiveMovies()
         updatePageDisplay()
         resetScroll()
+        resetPageET()
 
         fetchMoviesPoster()
     }
@@ -189,6 +204,12 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
                 EMPTY_RESULT -> "Movie not found!"
                 else -> "An error has occurred"
             }
+        }
+    }
+
+    private fun resetPageET() {
+        viewModelScope.launch(Dispatchers.Main) {
+            liveSearchingPage.value = EMPTY
         }
     }
 

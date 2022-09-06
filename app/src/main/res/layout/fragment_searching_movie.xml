@@ -120,13 +120,41 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <Button
+                android:id="@+id/go_to_page_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> viewModel.onClickGoToPage()}"
+                android:text="Go to"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/back_button"
+                app:layout_constraintTop_toBottomOf="@+id/back_button" />
+
+            <EditText
+                android:id="@+id/page_et"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="3dp"
+                android:background="#efefff"
+                android:hint="Page"
+                android:inputType="number"
+                android:maxLines="1"
+                android:text="@={viewModel.liveSearchingPage}"
+                android:textColor="@color/black"
+                android:textColorHint="#808080"
+                app:layout_constraintStart_toEndOf="@+id/go_to_page_button"
+                app:layout_constraintTop_toTopOf="@+id/go_to_page_button" />
+
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/movie_list_rv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginBottom="10dp"
                 app:layout_constraintBottom_toTopOf="@+id/plot_tv"
-                app:layout_constraintTop_toBottomOf="@+id/back_button" />
+                app:layout_constraintTop_toBottomOf="@+id/go_to_page_button" />
 
             <TextView
                 android:id="@+id/plot_tv"
