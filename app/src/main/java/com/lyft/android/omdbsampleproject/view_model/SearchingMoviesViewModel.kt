@@ -1,8 +1,8 @@
 package com.lyft.android.omdbsampleproject.view_model
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
+import com.lyft.android.omdbsampleproject.R
 import com.lyft.android.omdbsampleproject.model.MovieData
 import com.lyft.android.omdbsampleproject.model.repository.movie_image.MovieImageRepository
 import com.lyft.android.omdbsampleproject.model.repository.movies_info.MovieRepositoryImpl
@@ -11,8 +11,29 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface = MovieRepositoryImpl()) :
-    ViewModel() {
+/**
+ * To use "getApplication<Application>().applicationContext" from AndroidViewModel,
+ * this argument's "application" is not used
+ */
+class SearchingMoviesViewModel(
+    application: Application,
+    private val movieRepo: MovieRepositoryInterface = MovieRepositoryImpl()
+) :
+    AndroidViewModel(application) {
+
+    /**
+     * When ViewModel has arguments in the constructor,
+     * "Factory" class is needed!
+     */
+    class SearchingMoviesFactory(
+        private val application: Application,
+        private val movieRepo: MovieRepositoryInterface = MovieRepositoryImpl()
+    ) :
+        ViewModelProvider.NewInstanceFactory() {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return SearchingMoviesViewModel(application, movieRepo) as T
+        }
+    }
 
     val liveMovies = MutableLiveData<List<MovieData>>()
     val liveSearchingTitle = MutableLiveData<String>()
@@ -49,13 +70,13 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         liveMovies.value = movies
         liveSearchingTitle.value = EMPTY
         liveSearchingYear.value = EMPTY
-        livePageDisplay.value = "Let's search movies!"
-        livePlot.value = "Movie Plot"
+        livePageDisplay.value = getString(R.string.header_title_1)
+        livePlot.value = getString(R.string.default_plot)
     }
 
     fun onClickSearchButton() {
         if (liveSearchingTitle.value.isNullOrBlank()) {
-            listener?.showToast("Please enter Title")
+            listener?.showToast(getString(R.string.require_title))
             return
         }
         currentTitle = liveSearchingTitle.value!!
@@ -67,11 +88,11 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
 
     fun onClickBackPage() {
         if (movies.isEmpty()) {
-            listener?.showToast("There is no movie")
+            listener?.showToast(getString(R.string.no_movie))
             return
         }
         if (currentPage <= DEFAULT_PAGE) {
-            listener?.showToast("Here is the top page")
+            listener?.showToast(getString(R.string.already_top))
             return
         }
         currentPage--
@@ -81,11 +102,11 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
 
     fun onClickNextPage() {
         if (movies.isEmpty()) {
-            listener?.showToast("There is no movie")
+            listener?.showToast(getString(R.string.no_movie))
             return
         }
         if (currentPage == lastPage) {
-            listener?.showToast("Here is the last page")
+            listener?.showToast(getString(R.string.already_last))
             return
         }
         currentPage++
@@ -185,16 +206,16 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
     private fun updatePageDisplay() {
         viewModelScope.launch(Dispatchers.Main) {
             livePageDisplay.value = when (searchResultStatus) {
-                SUCCESS_RESULT -> "Page$currentPage in $lastPage"
-                EMPTY_RESULT -> "Movie not found!"
-                else -> "An error has occurred"
+                SUCCESS_RESULT -> getString(R.string.page_status, listOf(currentPage, lastPage))
+                EMPTY_RESULT -> getString(R.string.not_found)
+                else -> getString(R.string.error)
             }
         }
     }
 
     private fun resetPlot() {
         viewModelScope.launch(Dispatchers.Main) {
-            livePlot.value = "Movie Plot"
+            livePlot.value = getString(R.string.default_plot)
         }
     }
 
@@ -203,6 +224,19 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
             listener?.resetScroll()
         }
     }
+
+    /**
+     * Only AndroidViewModel can use applicationContext
+     */
+    private fun getString(id: Int, args: List<Any> = listOf()): String {
+        return when (args.size) {
+            0 -> getApplication<Application>().applicationContext.getString(id)
+            1 -> getApplication<Application>().applicationContext.getString(id, args[0])
+            2 -> getApplication<Application>().applicationContext.getString(id, args[0], args[1])
+            else -> EMPTY
+        }
+    }
+
 
     /**
      * In MVVM, ViewModel can't refer View.
