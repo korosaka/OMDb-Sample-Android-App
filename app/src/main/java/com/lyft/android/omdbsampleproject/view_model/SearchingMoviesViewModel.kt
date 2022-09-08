@@ -1,9 +1,9 @@
 package com.lyft.android.omdbsampleproject.view_model
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
 import com.lyft.android.omdbsampleproject.model.MovieData
+import com.lyft.android.omdbsampleproject.model.MySharedPreference
 import com.lyft.android.omdbsampleproject.model.repository.movie_image.MovieImageRepository
 import com.lyft.android.omdbsampleproject.model.repository.movies_info.MovieRepositoryImpl
 import com.lyft.android.omdbsampleproject.model.repository.movies_info.MovieRepositoryInterface
@@ -11,8 +11,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface = MovieRepositoryImpl()) :
-    ViewModel() {
+class SearchingMoviesViewModel(
+    application: Application,
+    private val movieRepo: MovieRepositoryInterface = MovieRepositoryImpl()
+) :
+    AndroidViewModel(application) {
+
+    /**
+     * When ViewModel has arguments in the constructor,
+     * "Factory" class is needed!
+     */
+    class SearchingMoviesFactory(
+        private val application: Application,
+        private val movieRepo: MovieRepositoryInterface = MovieRepositoryImpl()
+    ) :
+        ViewModelProvider.NewInstanceFactory() {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return SearchingMoviesViewModel(application, movieRepo) as T
+        }
+    }
+
 
     val liveMovies = MutableLiveData<List<MovieData>>()
     val liveSearchingTitle = MutableLiveData<String>()
@@ -122,6 +140,7 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         updatePageDisplay()
         resetScroll()
 
+        applyFavToMovies()
         fetchMoviesPoster()
     }
 
@@ -202,6 +221,19 @@ class SearchingMoviesViewModel(private val movieRepo: MovieRepositoryInterface =
         viewModelScope.launch(Dispatchers.Main) {
             listener?.resetScroll()
         }
+    }
+
+    fun onClickFav(id: String) {
+        MySharedPreference().saveFavorites(id, getApplication<Application>().applicationContext)
+        applyFavToMovies()
+    }
+
+    private fun applyFavToMovies() {
+        val favIds = MySharedPreference().getFavorites(getApplication<Application>().applicationContext)
+        for (movie in movies) {
+            if (favIds.contains(movie.id)) movie.isFav = true
+        }
+        updateLiveMovies()
     }
 
     /**

@@ -20,7 +20,9 @@ import kotlinx.android.synthetic.main.fragment_searching_movie.*
 
 class SearchingMovieFragment : Fragment(), SearchingMoviesViewModel.SearchingListener {
 
-    private val viewModel: SearchingMoviesViewModel by viewModels()
+    private val viewModel: SearchingMoviesViewModel by viewModels {
+        SearchingMoviesViewModel.SearchingMoviesFactory(requireActivity().application)
+    }
     private lateinit var adapter: MovieListAdapter
     private lateinit var binding: FragmentSearchingMovieBinding
 

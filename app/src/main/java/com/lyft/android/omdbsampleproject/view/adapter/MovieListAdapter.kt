@@ -1,5 +1,6 @@
 package com.lyft.android.omdbsampleproject.view.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ class MovieListAdapter(
         val movie = viewModel.movies[position]
         holder.binding.movieData = movie
         holder.binding.viewModel = viewModel
+        holder.itemView.favorite_text.setTextColor(if (movie.isFav) Color.YELLOW else Color.GRAY)
     }
 
     override fun getItemCount(): Int {
