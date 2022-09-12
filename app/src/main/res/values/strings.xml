@@ -7,5 +7,14 @@
     <string name="next">Next</string>
     <string name="plot">Plot</string>
 
+    <string name="header_title_1">Let\'s search movies!</string>
+    <string name="default_plot">Movie Plot</string>
+    <string name="require_title">Please enter Title</string>
+    <string name="no_movie">There is no movie</string>
+    <string name="already_top">Here is the top page</string>
+    <string name="already_last">Here is the last page</string>
+    <string name="page_status">Page%1$d in %2$d</string>
+    <string name="not_found">Movie not found!</string>
+    <string name="error">An error has occurred</string>
 
 </resources>
