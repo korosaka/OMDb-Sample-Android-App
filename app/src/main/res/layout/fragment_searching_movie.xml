@@ -26,6 +26,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <!-- Two-way binding "@={}" -->
             <EditText
                 android:id="@+id/title_et"
                 android:layout_width="0dp"

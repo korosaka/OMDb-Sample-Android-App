@@ -70,6 +70,10 @@ class SearchingMovieFragment : Fragment(), SearchingMoviesViewModel.SearchingLis
         }
     }
 
+    /**
+     * Hopefully, on MVVM, ViewModel shouldn't operate View even through Interface.
+     * In this case, using Livedata, ViewModel should notify View and View should observe it and do tasks within View.
+     */
     override fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
