@@ -59,14 +59,16 @@ class SearchingMovieFragment : Fragment(), SearchingMoviesViewModel.SearchingLis
     private fun operateKeyBoard() {
         addFocusChangeListener(title_et)
         addFocusChangeListener(year_et)
+        addFocusChangeListener(page_et)
     }
 
     private fun addFocusChangeListener(et: EditText) {
         et.setOnFocusChangeListener { view, b ->
             val imm: InputMethodManager =
                 activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            if (b) imm.showSoftInput(view, 0)
-            else imm.hideSoftInputFromWindow(view.windowToken, 0)
+            if (!b) imm.hideSoftInputFromWindow(view.windowToken, 0)
+//            if (b) imm.showSoftInput(view, 0)
+//            else imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
